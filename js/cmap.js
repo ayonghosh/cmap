@@ -38,6 +38,27 @@ ck12.CMap.prototype.getZoomLevel = function () {
 	}
 	return -1;
 };
+
+ck12.CMap.prototype.getBounds = function () {
+    if (this.map) {
+        var lat0 = map.getBounds().getNorthEast().lat(),
+            lng0 = map.getBounds().getNorthEast().lng(),
+            lat1 = map.getBounds().getSouthWest().lat(),
+            lng1 = map.getBounds().getSouthWest().lng();
+        
+        return {
+            "ne": {
+                "lat": lat0, 
+                "long": lng0
+            },
+            "sw": {
+                "lat": lat1, 
+                "long": lng1
+            }
+        };
+    }
+    return null;
+};
 	
 ck12.CMap.prototype.showMarkers = function () {
 	

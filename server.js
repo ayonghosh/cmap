@@ -175,6 +175,10 @@ var SampleApp = function() {
                         Date(Date.now() ), self.ipaddress, self.port);
         });
     };
+    
+    self.app.get("/api/test/:id", function (req, res) {
+        res.json(req.params.id);
+    });
 
 };   /*  Sample Application.  */
 

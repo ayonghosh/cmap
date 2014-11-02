@@ -52,6 +52,8 @@ ck12.app = {
 	ZOOMLEVEL_STATE : 1,
 	ZOOMLEVEL_CITY  : 2,
 	ZOOMLEVEL_ZIP   : 3,
+    
+    dirty: false,
 
 	init: function (mapEl) {
 		var _self = this;
@@ -61,11 +63,11 @@ ck12.app = {
 		    	center: new google.maps.LatLng(41.850033, -87.6500523)	// USA
 		    },
 		    events: [
-		    	{
-		    		name: "zoom_changed",
-		    		handler: _self.zoomHandler,
-		    		context: _self
-		    	}
+                {
+                    name: "idle",
+                    handler: _self.zoomHandler,
+                    context: _self
+                }
 		    ]
 	  	};
 	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
@@ -73,10 +75,10 @@ ck12.app = {
 		this.queryForStates();
 	},
 	zoomHandler: function () {
-		var zoomLevel = this.map.getZoomLevel();
+		/*var zoomLevel = this.map.getZoomLevel();
 		if (this.lastZoomLevel === zoomLevel) {
 			return;
-		}
+		}*/
 		if (zoomLevel < 7) {
 			// state markers
 			//console.log("show state markers");
