@@ -124,6 +124,16 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+        
+        self.routes['/js/cmap.js'] = function (req, res) {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.send(fs.readFileSync('./js/cmap.js'));
+        };
+        
+        self.routes['/js/app.js'] = function (req, res) {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.send(fs.readFileSync('./js/app.js'));
+        };
     };
 
 
