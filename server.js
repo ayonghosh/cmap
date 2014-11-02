@@ -126,7 +126,7 @@ var SampleApp = function() {
         
         self.routes['/api/get'] = function (req, res) {
             // Connect to the db
-            MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@127.9.195.2:27017/nodejs", function(err, db) {
+            /*MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@127.9.195.2:27017/nodejs", function(err, db) {
                 if(err) { return console.dir(err); }
                 
                 db.nodejs.find().limit(50).toArray(function (err, docs) {
@@ -136,7 +136,8 @@ var SampleApp = function() {
                     }
                 });
 
-            });
+            });*/
+            res.json(fs.readFileSync('./sample.json'));
         };
         
         self.routes['/api/all'] = function (req, res) {
