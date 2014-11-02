@@ -91,6 +91,9 @@ ck12.app = {
 	  	};
 		this.map = new ck12.CMap(mapEl, config);
 	},
+    /*
+     * Initializes markers on map load
+     */
     initMarkers: function () {
         if (!this.hasInit) {    // execute only once after initial load
             this.zoomHandler();
