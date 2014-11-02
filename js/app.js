@@ -142,6 +142,7 @@ ck12.app = {
 	},
     updateMarkers: function (xhr) {
         try {
+            this.map.clearMarkers();
             var data = JSON.parse(xhr.responseRext);
             for (var i = 0; i < data.length; i++) {
                 this.map.updateMarkers({

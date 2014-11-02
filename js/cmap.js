@@ -41,10 +41,10 @@ ck12.CMap.prototype.getZoomLevel = function () {
 
 ck12.CMap.prototype.getBounds = function () {
     if (this.map) {
-        var lat0 = map.getBounds().getNorthEast().lat(),
-            lng0 = map.getBounds().getNorthEast().lng(),
-            lat1 = map.getBounds().getSouthWest().lat(),
-            lng1 = map.getBounds().getSouthWest().lng();
+        var lat0 = this.map.getBounds().getNorthEast().lat(),
+            lng0 = this.map.getBounds().getNorthEast().lng(),
+            lat1 = this.map.getBounds().getSouthWest().lat(),
+            lng1 = this.map.getBounds().getSouthWest().lng();
         
         return {
             "ne": {

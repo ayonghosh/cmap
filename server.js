@@ -37,23 +37,7 @@ var SampleApp = function() {
     // MongoDB
     var MongoClient = mongodb.MongoClient;
 
-    // Connect to the db
-    MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@nodejs-ck12map.rhcloud.com:27017/nodejs", function(err, db) {
-      if(err) { return console.dir(err); }
-
-//      var collection = db.collection('test');
-//      var doc1 = {'hello':'doc1'};
-//      var doc2 = {'hello':'doc2'};
-//      var lotsOfDocs = [{'hello':'doc3'}, {'hello':'doc4'}];
-//
-//      collection.insert(doc1);
-//
-//      collection.insert(doc2, {w:1}, function(err, result) {});
-//
-//      collection.insert(lotsOfDocs, {w:1}, function(err, result) {});
-
-    });
-
+    
     /**
      *  Populate the cache.
      */
@@ -138,6 +122,22 @@ var SampleApp = function() {
         // API
         self.routes['/api/test/:id'] = function (req, res) {
             res.json(req.params.id);
+        };
+        
+        self.routes['/api/get'] = function (req, res) {
+            // Connect to the db
+            MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@127.9.195.2:27017/nodejs", function(err, db) {
+                if(err) { return console.dir(err); }
+                
+                var collection = db.collection('user');
+                db.collection.find().limit(50).toArray(function (err, docs) {
+                    if (!err) {
+                        db.close();
+                        res.json(JSON.stringify(docs));
+                    }
+                });
+
+            });
         };
         
         self.routes['/api/all'] = function (req, res) {
