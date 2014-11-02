@@ -129,8 +129,7 @@ var SampleApp = function() {
             MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@127.9.195.2:27017/nodejs", function(err, db) {
                 if(err) { return console.dir(err); }
                 
-                var collection = db.collection('user');
-                db.collection.find().limit(50).toArray(function (err, docs) {
+                db.nodejs.find().limit(50).toArray(function (err, docs) {
                     if (!err) {
                         db.close();
                         res.json(JSON.stringify(docs));
