@@ -62,9 +62,7 @@ ck12.utils = {
  * The app.
  */
 ck12.app = {
-	ZOOMLEVEL_STATE : 1,
-	ZOOMLEVEL_CITY  : 2,
-	ZOOMLEVEL_ZIP   : 3,
+    hasInit: false,
 
     /*
      * Initializes the map.
@@ -80,18 +78,26 @@ ck12.app = {
 		    },
 		    events: [
                 {
-                    name: "idle",
+                    name: "idle",   // when user has stopped zooming or panning
                     handler: _self.zoomHandler,
+                    context: _self
+                },
+                {
+                    name: "bounds_changed", // used for initial load
+                    handler: _self.initMarkers,
                     context: _self
                 }
 		    ]
 	  	};
-	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
 		this.map = new ck12.CMap(mapEl, config);
-        
-        // initial markers
-        this.apiQuery(4, this.map.getBounds());
 	},
+    initMarkers: function () {
+        if (!this.hasInit) {    // execute only once after initial load
+            this.zoomHandler();
+            this.hasInit = true;
+        }
+    },
+    
     /*
      * Takes necessary action when user zooms in or moves around on the map.
      */
@@ -99,8 +105,8 @@ ck12.app = {
         var mapBounds = this.map.getBounds();
 		var zoomLevel = this.map.getZoomLevel();
         this.apiQuery(zoomLevel, mapBounds);
-		this.lastZoomLevel = zoomLevel;
 	},
+    
     /*
      * Queries the API to return all points for the particular zoom level
      * and viewport boundaries.
@@ -112,33 +118,37 @@ ck12.app = {
             "&lat1=" + mapBounds.sw.lat + 
             "&lng1=" + mapBounds.sw.long;
         
-        var callback = this.updateMarkers();
+        var callback = this.updateMarkers;
+        var self = this;
         ck12.utils.doAjax({
             url: url,
             method: "GET",
-            success: callback
+            success: function (xhr) { callback.call(self, xhr); }
         });
             
     },
+    
     /*
      * Adds and renders markers returned by API on the map.
      */
     updateMarkers: function (xhr) {
         try {
-            this.map.clearMarkers();
-            var data = JSON.parse(xhr.responseRext);
-            for (var i = 0; i < data.length; i++) {
-                this.map.updateMarkers({
-                    "location": {
-                        "lat": data[i].lat,
-                        "lng": data[i].lng
-                    },
-                    "title": data[i].state_small_name + ", " + data[i].city_small_name + " - " + data[i].zip
-                });
-            }
-            this.map.renderMarkers();
+            var data = JSON.parse(xhr.responseText);
         }catch (e) {
             console.log("ERROR parsing response from API");
         }
+        var markerData = [];    // current list of markers from API
+        for (var i = 0; i < data.length; i++) {
+            var marker = {
+                "location": {
+                    "lat": data[i].lat,
+                    "long": data[i].lng
+                },
+                "title": data[i].city_small_name + ", " + data[i].state_small_name + " - " + data[i].zip
+            };
+            markerData.push(marker);
+        }
+        this.map.updateMarkers(markerData);
+        this.map.renderMarkers();
     }
 };

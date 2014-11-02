@@ -137,7 +137,12 @@ var SampleApp = function() {
                 });
 
             });*/
-            res.json(fs.readFileSync('./sample.json'));
+            res.setHeader('Content-Type', 'application/json');
+            if (req.param("zoom") == 4) {
+                res.send(fs.readFileSync('./sample.json'));
+            }else {
+                res.send(fs.readFileSync('./sample2.json'));
+            }
         };
         
         self.routes['/api/all'] = function (req, res) {

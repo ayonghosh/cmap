@@ -12,13 +12,12 @@ var ck12 = ck12 || {};
  * using configuration
  */
 ck12.CMap = function (mapEl, config) {
-	this.map = new google.maps.Map(mapEl, config.mapOptions);
-	this.markers = [];
+	this.map = new google.maps.Map(mapEl, config.mapOptions);  // the Google map object
+	this.markers = []; // a hash map of all currently visible markers
 	
 	// handle zoom
 	if (config.events) {
 		for (var i = 0; i < config.events.length; i++) {
-			//google.maps.event.addListener(this.map, config.events[i].name, config.events[i].handler);
 			google.maps.event.addListener(this.map, config.events[i].name, function (callback, context) {
 				return function () {
 					callback.call(context);
@@ -26,20 +25,6 @@ ck12.CMap = function (mapEl, config) {
 			}(config.events[i].handler, config.events[i].context));
 		}
 	}
-};
-
-/*
- * Adds a marker but doesn't render it.
- */
-ck12.CMap.prototype.addMarker = function (location, title) {
-	var _self = this;
-	var latlng = new google.maps.LatLng(location.lat, location.long);
-	var marker = new google.maps.Marker({
-    	position: latlng,
-    	map: _self.map,
-    	title: title
-  	});
-  	this.markers.push(marker);
 };
 
 /*
@@ -79,11 +64,43 @@ ck12.CMap.prototype.getBounds = function () {
 };
 
 /*
+ * Adds a marker but doesn't render it.
+ */
+ck12.CMap.prototype.addMarker = function (hashKey, location, title) {
+	var latlng = new google.maps.LatLng(location.lat, location.long);
+	var marker = new google.maps.Marker({
+    	position: latlng,
+    	title: title
+  	});
+    if (!this.markers[hashKey]) {
+        this.markers[hashKey] = marker;
+    }
+};
+
+/*
+ * Generates a unique key for a location (latitude-longitude pair)
+ */
+ck12.CMap.prototype.hash = function (location) {
+    return location.lat + "_" + location.long;
+};
+
+/*
  * Adds all markers to map from specified data but does not render them.
  */
 ck12.CMap.prototype.updateMarkers = function (data) {
+    var hashKeys = [];  // hash map of currently visible markers
 	for (var i = 0; i < data.length; i++) {
-        this.addMarker(data[i].location, data[i].title);
+        var hashKey = this.hash(data[i].location);
+        this.addMarker(hashKey, data[i].location, data[i].title);
+        hashKeys[hashKey] = true;
+    }
+    // remove markers that are no longer visible
+    for (hashKey in this.markers) {
+        if (!hashKeys[hashKey]) {
+            this.markers[hashKey].setMap(null);
+            this.markers[hashKey] = null;
+            delete this.markers[hashKey];
+        }
     }
 };
 
@@ -91,16 +108,21 @@ ck12.CMap.prototype.updateMarkers = function (data) {
  * Clears all existing markers from the map.
  */   
 ck12.CMap.prototype.clearMarkers = function () {
-	setAllMap(null);
+	for (var i = 0; i < this.markers.length; i++) {
+    	this.markers[i].setMap(null);
+  	}
     this.markers = null;
     this.markers = [];
 };
 
 /*
- * Renders all current marks on the map.
+ * Renders all currently unrendered markers on the map.
  */
 ck12.CMap.prototype.renderMarkers = function () {
-	for (var i = 0; i < this.markers.length; i++) {
-    	this.markers[i].setMap(this.map);
+    for (var hashKey in this.markers) {
+        if (!this.markers[hashKey].getMap()) {
+    	   this.markers[hashKey].setMap(this.map);
+        }
   	}
 };
+
