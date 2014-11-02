@@ -88,6 +88,9 @@ ck12.app = {
 	  	};
 	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
 		this.map = new ck12.CMap(mapEl, config);
+        
+        // initial markers
+        this.apiQuery(4, this.map.getBounds());
 	},
     /*
      * Takes necessary action when user zooms in or moves around on the map.
