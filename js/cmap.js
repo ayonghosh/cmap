@@ -1,10 +1,16 @@
+/* 
+ * Author: Ayon Ghosh
+ * Date: 2 Nov 2014
+ */
+
+// master namespace
 var ck12 = ck12 || {};
 
+/*
+ * Constructor. Abastract wrapper over Google maps. Initializes a map on the specified DOM element
+ * using configuration
+ */
 ck12.CMap = function (mapEl, config) {
-	// TODO: remove if not required?
-	//this.mapEl = mapEl;
-	//this.config = config;
-	
 	this.map = new google.maps.Map(mapEl, config.mapOptions);
 	this.markers = [];
 	
@@ -20,7 +26,10 @@ ck12.CMap = function (mapEl, config) {
 		}
 	}
 };
-	
+
+/*
+ * Adds a marker but doesn't render it.
+ */
 ck12.CMap.prototype.addMarker = function (location, title) {
 	var _self = this;
 	var latlng = new google.maps.LatLng(location.lat, location.long);
@@ -32,6 +41,9 @@ ck12.CMap.prototype.addMarker = function (location, title) {
   	this.markers.push(marker);
 };
 
+/*
+ * Gets the zoom level (integer) of the map.
+ */
 ck12.CMap.prototype.getZoomLevel = function () {
 	if (this.map) {
 		return this.map.getZoom();
@@ -39,6 +51,11 @@ ck12.CMap.prototype.getZoomLevel = function () {
 	return -1;
 };
 
+/*
+ * Gets the viewport bounds (of northeast and southwest corners) in latitude and longitude.
+ * Returns JSON of the format:
+ * { "ne": { "lat", "long" }, "sw": { "lat", "long"} }
+ */
 ck12.CMap.prototype.getBounds = function () {
     if (this.map) {
         var lat0 = this.map.getBounds().getNorthEast().lat(),
@@ -59,19 +76,28 @@ ck12.CMap.prototype.getBounds = function () {
     }
     return null;
 };
-	
+
+/*
+ * Adds all markers to map from specified data but does not render them.
+ */
 ck12.CMap.prototype.updateMarkers = function (data) {
 	for (var i = 0; i < data.length; i++) {
         this.addMarker(data[i].location, data[i].title);
     }
 };
 
+/*
+ * Clears all existing markers from the map.
+ */   
 ck12.CMap.prototype.clearMarkers = function () {
 	setAllMap(null);
     this.markers = null;
     this.markers = [];
 };
 
+/*
+ * Renders all current marks on the map.
+ */
 ck12.CMap.prototype.renderMarkers = function () {
 	for (var i = 0; i < this.markers.length; i++) {
     	this.markers[i].setMap(this.map);

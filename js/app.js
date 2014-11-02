@@ -1,10 +1,19 @@
+/*
+ * Author: Ayon Ghosh
+ * Date: 2 November 2014
+ */
+
+// master namespace
 var ck12 = ck12 || {};
 
+// check if required scripts have been loaded
 if (!ck12.CMap) {
 	(typeof console !== "undefined") && console.log("FATAL ERROR: Missing required source files. Failed to initialize app");
 }
 
+// common utils
 ck12.utils = {
+    // Cross browser Ajax wrapper
 	doAjax: function (config) {
 		var xhr;
          
@@ -24,10 +33,10 @@ ck12.utils = {
                     xhr = new ActiveXObject(versions[i]);
                     break;
                 }
-                catch(e){
-                	console.log("Error in API call " + e);
+                catch (e){
+                	console.log("FATAL: Ajax might not be supported on your browser");
                 }
-             } // end for
+             }
         }
          
         xhr.onreadystatechange = function () {
@@ -44,19 +53,25 @@ ck12.utils = {
         }
          
         xhr.open(config.method.toUpperCase(), config.url, true);
-        xhr.send('');
+        xhr.send(config.data || '');
     }
 };
 
+/*
+ * The app.
+ */
 ck12.app = {
 	ZOOMLEVEL_STATE : 1,
 	ZOOMLEVEL_CITY  : 2,
 	ZOOMLEVEL_ZIP   : 3,
-    
-    dirty: false,
 
+    /*
+     * Initializes the map.
+     */
 	init: function (mapEl) {
 		var _self = this;
+        // config containing initial zoom, initial center of the map and 
+        // event handlers to be attached
 		var config = {
 			mapOptions: {
 		    	zoom: 4,
@@ -73,12 +88,19 @@ ck12.app = {
 	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
 		this.map = new ck12.CMap(mapEl, config);
 	},
+    /*
+     * Takes necessary action when user zooms in or moves around on the map.
+     */
 	zoomHandler: function () {
         var mapBounds = this.map.getBounds();
 		var zoomLevel = this.map.getZoomLevel();
         this.apiQuery(zoomLevel, mapBounds);
 		this.lastZoomLevel = zoomLevel;
 	},
+    /*
+     * Queries the API to return all points for the particular zoom level
+     * and viewport boundaries.
+     */
     apiQuery: function (zoomLevel, mapBounds) {
         var url = "/api/get?zoom=" + zoomLevel + 
             "&lat0=" + mapBounds.ne.lat + 
@@ -94,6 +116,9 @@ ck12.app = {
         });
             
     },
+    /*
+     * Adds and renders markers returned by API on the map.
+     */
     updateMarkers: function (xhr) {
         try {
             this.map.clearMarkers();
