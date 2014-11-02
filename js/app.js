@@ -72,26 +72,11 @@ ck12.app = {
 	  	};
 	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
 		this.map = new ck12.CMap(mapEl, config);
-		this.queryForStates();
+		this.zoomHandler();
 	},
 	zoomHandler: function () {
         var mapBounds = this.map.getBounds();
 		var zoomLevel = this.map.getZoomLevel();
-		if (this.lastZoomLevel === zoomLevel) {
-			return;
-		}
-		/*if (zoomLevel < 7) {
-			// state markers
-			//console.log("show state markers");
-			//this.queryForStates();
-            
-		}else if (zoomLevel < 10) {
-			// city markers
-			//console.log("show city markers");
-		}else {
-			// zip markers
-			//console.log("show zip markers");
-		}*/
         this.apiQuery(zoomLevel, mapBounds);
 		this.lastZoomLevel = zoomLevel;
 	},
@@ -110,38 +95,6 @@ ck12.app = {
         });
             
     },
-	queryForStates: function () {
-		var sampleData = [{
-		        "lat": 38.04,
-		        "lng": 266.88,
-		        "city_long_name": "Hickory County",
-		        "city_small_name": "Hickory County",
-		        "state_long_name": "Missouri",
-		        "state_small_name": "Missouri",
-		        "zip": "65326"
-		    }, {
-		        "lat": 38.04,
-		        "lng": 266.76,
-		        "city_long_name": "Hickory County",
-		        "city_small_name": "Hickory County",
-		        "state_long_name": "Missouri",
-		        "state_small_name": "Missouri",
-		        "zip": "65326"
-		    }, {
-		        "lat": 38.04,
-		        "lng": 266.64,
-		        "city_long_name": "Hickory County",
-		        "city_small_name": "Hickory County",
-		        "state_long_name": "Missouri",
-		        "state_small_name": "Missouri",
-		        "zip": "65355"
-		    }
-		];
-		for (var i = 0; i < sampleData.length; i++) {
-			this.map.addMarker({"lat": sampleData[i].lat, "long": sampleData[i].lng}, "");
-		}
-		this.map.renderMarkers();
-	},
     updateMarkers: function (xhr) {
         try {
             this.map.clearMarkers();
