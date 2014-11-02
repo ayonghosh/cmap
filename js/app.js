@@ -80,17 +80,19 @@ ck12.app = {
 		if (this.lastZoomLevel === zoomLevel) {
 			return;
 		}
-		if (zoomLevel < 7) {
+		/*if (zoomLevel < 7) {
 			// state markers
 			//console.log("show state markers");
-			this.queryForStates();
+			//this.queryForStates();
+            
 		}else if (zoomLevel < 10) {
 			// city markers
 			//console.log("show city markers");
 		}else {
 			// zip markers
 			//console.log("show zip markers");
-		}
+		}*/
+        this.apiQuery(zoomLevel, mapBounds);
 		this.lastZoomLevel = zoomLevel;
 	},
     apiQuery: function (zoomLevel, mapBounds) {
