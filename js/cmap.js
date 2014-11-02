@@ -1,4 +1,5 @@
 /* 
+ * CMap - an abstract wrapper over Google maps.
  * Author: Ayon Ghosh
  * Date: 2 Nov 2014
  */
@@ -7,7 +8,7 @@
 var ck12 = ck12 || {};
 
 /*
- * Constructor. Abastract wrapper over Google maps. Initializes a map on the specified DOM element
+ * Constructor. Initializes a map on the specified DOM element
  * using configuration
  */
 ck12.CMap = function (mapEl, config) {
