@@ -38,7 +38,7 @@ var SampleApp = function() {
     var MongoClient = mongodb.MongoClient;
 
     // Connect to the db
-    MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@localhost:27017/nodejs", function(err, db) {
+    MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@nodejs-ck12map.rhcloud.com:27017/nodejs", function(err, db) {
       if(err) { return console.dir(err); }
 
 //      var collection = db.collection('test');
@@ -134,6 +134,16 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'application/javascript');
             res.send(fs.readFileSync('./js/app.js'));
         };
+        
+        // API
+        self.routes['/api/test/:id'] = function (req, res) {
+            res.json(req.params.id);
+        };
+        
+        self.routes['/api/all'] = function (req, res) {
+            res.json(fs.readFileSync('./data.json'));
+        };
+
     };
 
 
@@ -176,10 +186,6 @@ var SampleApp = function() {
         });
     };
     
-    self.app.get("/api/test/:id", function (req, res) {
-        res.json(req.params.id);
-    });
-
 };   /*  Sample Application.  */
 
 

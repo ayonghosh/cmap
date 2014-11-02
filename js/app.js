@@ -25,7 +25,7 @@ ck12.utils = {
                     break;
                 }
                 catch(e){
-                	
+                	console.log("Error in API call " + e);
                 }
              } // end for
         }
@@ -39,7 +39,7 @@ ck12.utils = {
             }
             // all is well  
             if(xhr.readyState === 4) {
-                config.callback(xhr);
+                config.success(xhr);
             }           
         }
          
@@ -75,10 +75,11 @@ ck12.app = {
 		this.queryForStates();
 	},
 	zoomHandler: function () {
-		/*var zoomLevel = this.map.getZoomLevel();
+        var mapBounds = this.map.getBounds();
+		var zoomLevel = this.map.getZoomLevel();
 		if (this.lastZoomLevel === zoomLevel) {
 			return;
-		}*/
+		}
 		if (zoomLevel < 7) {
 			// state markers
 			//console.log("show state markers");
@@ -92,6 +93,21 @@ ck12.app = {
 		}
 		this.lastZoomLevel = zoomLevel;
 	},
+    apiQuery: function (zoomLevel, mapBounds) {
+        var url = "/api/get?zoom=" + zoomLevel + 
+            "&lat0=" + mapBounds.ne.lat + 
+            "&lng0=" + mapBounds.ne.long +
+            "&lat1=" + mapBounds.sw.lat + 
+            "&lng1=" + mapBounds.sw.long;
+        
+        var callback = this.updateMarkers();
+        ck12.utils.doAjax({
+            url: url,
+            method: "GET",
+            success: callback
+        });
+            
+    },
 	queryForStates: function () {
 		var sampleData = [{
 		        "lat": 38.04,
@@ -124,10 +140,21 @@ ck12.app = {
 		}
 		this.map.renderMarkers();
 	},
-	queryForCities: function () {
-		
-	},
-	queryForZip: function() {
-		
-	}
+    updateMarkers: function (xhr) {
+        try {
+            var data = JSON.parse(xhr.responseRext);
+            for (var i = 0; i < data.length; i++) {
+                this.map.updateMarkers({
+                    "location": {
+                        "lat": data[i].lat,
+                        "lng": data[i].lng
+                    },
+                    "title": data[i].state_small_name + ", " + data[i].city_small_name + " - " + data[i].zip
+                });
+            }
+            this.map.renderMarkers();
+        }catch (e) {
+            console.log("ERROR parsing response from API");
+        }
+    }
 };

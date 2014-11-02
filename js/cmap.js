@@ -60,12 +60,16 @@ ck12.CMap.prototype.getBounds = function () {
     return null;
 };
 	
-ck12.CMap.prototype.showMarkers = function () {
-	
+ck12.CMap.prototype.updateMarkers = function (data) {
+	for (var i = 0; i < data.length; i++) {
+        this.addMarker(data[i].location, data[i].title);
+    }
 };
 
 ck12.CMap.prototype.clearMarkers = function () {
 	setAllMap(null);
+    this.markers = null;
+    this.markers = [];
 };
 
 ck12.CMap.prototype.renderMarkers = function () {
