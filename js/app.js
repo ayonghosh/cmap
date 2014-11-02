@@ -72,7 +72,6 @@ ck12.app = {
 	  	};
 	  	this.lastZoomLevel = this.ZOOMLEVEL_STATE;
 		this.map = new ck12.CMap(mapEl, config);
-		this.zoomHandler();
 	},
 	zoomHandler: function () {
         var mapBounds = this.map.getBounds();
