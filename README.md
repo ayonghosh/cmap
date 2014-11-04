@@ -1,4 +1,4 @@
-The app is hosted at:
+See it in action here:
 
 http://nodejs-ck12map.rhcloud.com/
 
@@ -20,12 +20,11 @@ The back end has been implemented in NodeJS.
 Source hierarchy:
 
 [Back end]
- server.js - web server part (serves static files to client)
-
- api/index.js - API called through server
+> server.js - web server application
+> api/index.js - API
 
 [Front end]
- app.js  - the client side web app
- cmap.js - an abstract wrapper over Google maps
+> app.js  - the client side web app
+> cmap.js - an abstract wrapper over Google maps
 
-Hosted on OpenShift platform (https://openshift.redhat.com/)
+Hosted on OpenShift cloud platform: https://openshift.redhat.com/
