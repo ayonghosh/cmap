@@ -21,10 +21,12 @@ Source hierarchy:
 
 [Back end]
 > server.js - web server application
+>
 > api/index.js - API
 
 [Front end]
 > app.js  - the client side web app
+>
 > cmap.js - an abstract wrapper over Google maps
 
 Hosted on OpenShift cloud platform: https://openshift.redhat.com/
