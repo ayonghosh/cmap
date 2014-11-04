@@ -2,17 +2,16 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-var mongodb = require('mongodb');
+var api     = require('./api');
 
 /**
- *  Define the sample application.
+ *  Define the application.
  */
-var SampleApp = function() {
+var App = function() {
 
     //  Scope.
     var self = this;
-
-
+    
     /*  ================================================================  */
     /*  Helper functions.                                                 */
     /*  ================================================================  */
@@ -33,10 +32,30 @@ var SampleApp = function() {
         };
     };
     
-    
-    // MongoDB
-    var MongoClient = mongodb.MongoClient;
-
+    // override JSON.stringify
+    (function(){
+        // Convert array to object
+        var convArrToObj = function(array){
+            var thisEleObj = new Object();
+            if(typeof array == "object"){
+                for(var i in array){
+                    var thisEle = convArrToObj(array[i]);
+                    thisEleObj[i] = thisEle;
+                }
+            }else {
+                thisEleObj = array;
+            }
+            return thisEleObj;
+        };
+        var oldJSONStringify = JSON.stringify;
+        JSON.stringify = function(input){
+            if(oldJSONStringify(input) == '[]')
+                return oldJSONStringify(convArrToObj(input));
+            else
+                return oldJSONStringify(input);
+        };
+    })();
+        
     
     /**
      *  Populate the cache.
@@ -119,38 +138,26 @@ var SampleApp = function() {
             res.send(fs.readFileSync('./js/app.js'));
         };
         
-        // API
-        self.routes['/api/test/:id'] = function (req, res) {
-            res.json(req.params.id);
-        };
-        
         self.routes['/api/get'] = function (req, res) {
-            // Connect to the db
-            /*MongoClient.connect("mongodb://admin:xLrJXj_5XjUc@127.9.195.2:27017/nodejs", function(err, db) {
-                if(err) { return console.dir(err); }
-                
-                db.nodejs.find().limit(50).toArray(function (err, docs) {
-                    if (!err) {
-                        db.close();
-                        res.json(JSON.stringify(docs));
-                    }
-                });
-
-            });*/
+            // call API
             res.setHeader('Content-Type', 'application/json');
-            if (req.param("zoom") == 4) {
-                res.send(fs.readFileSync('./sample.json'));
-            }else {
-                res.send(fs.readFileSync('./sample2.json'));
-            }
+            var zoomLevel = +req.param("zoom"),
+                _neLat = +req.param("lat0"),
+                _neLong = +req.param("lng0"),
+                _swLat = +req.param("lat1"),
+                _swLong = +req.param("lng1");
+            
+            api.get(zoomLevel, _neLat, _neLong, _swLat, _swLong, function (json) { 
+                self.sendJSONResponse(res, json);
+            });
         };
         
-        self.routes['/api/all'] = function (req, res) {
-            res.json(fs.readFileSync('./data.json'));
-        };
-
     };
-
+    
+    self.sendJSONResponse = function (res, json) {
+        var response = JSON.stringify(json);
+        res.send(response);
+    };
 
     /**
      *  Initialize the server (express) and create the routes and register
@@ -177,6 +184,9 @@ var SampleApp = function() {
 
         // Create the express server and routes.
         self.initializeServer();
+        
+        // create state index
+        api.buildStateIndex();
     };
 
 
@@ -191,14 +201,14 @@ var SampleApp = function() {
         });
     };
     
-};   /*  Sample Application.  */
+};   /*  Application.  */
 
 
 
 /**
  *  main():  Main code.
  */
-var zapp = new SampleApp();
+var zapp = new App();
 zapp.initialize();
 zapp.start();
 

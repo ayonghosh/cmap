@@ -141,13 +141,14 @@ ck12.app = {
             console.log("ERROR parsing response from API");
         }
         var markerData = [];    // current list of markers from API
-        for (var i = 0; i < data.length; i++) {
+        for (var i in data) {
+            var title = data[i].title || data[i].city_small_name + ", " + data[i].state_small_name + " - " + data[i].zip;
             var marker = {
                 "location": {
                     "lat": data[i].lat,
                     "long": data[i].lng
                 },
-                "title": data[i].city_small_name + ", " + data[i].state_small_name + " - " + data[i].zip
+                "title": title
             };
             markerData.push(marker);
         }
