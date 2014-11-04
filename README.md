@@ -1,3 +1,3 @@
-The OpenShift `nodejs` cartridge documentation can be found at:
+The app is hosted at:
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
+http://nodejs-ck12map.rhcloud.com/
