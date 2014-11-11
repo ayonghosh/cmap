@@ -1,6 +1,6 @@
 See it in action here:
 
-http://nodejs-ck12map.rhcloud.com/
+http://cmap-intellisol.rhcloud.com/
 
 
 This is an app to demonstrate clustered rendering of markers on a 
